@@ -15,15 +15,15 @@ export default class CanvasComponent extends Vue {
   mounted() {
     const ctx = this.$refs.canvas as HTMLCanvasElement
     this.vueCanvas = ctx.getContext('2d')
-    const img = new Image()
-    img.onload = () => {
-      this.vueCanvas.drawImage(img, 30, 30, 50, 50)
-    }
-    img.src =
-      'https://api.sandbox.game/lands/61101e37-4c21-4179-a82b-597bda3e71af/v1/preview-500px-x-500px.jpg'
   }
 
-  addImage() {}
+  addImage(metadata: any) {
+    const img = new Image()
+    img.onload = () => {
+      this.vueCanvas.drawImage(img, metadata.x, metadata.y, 50, 50)
+    }
+    img.src = metadata.image
+  }
 
   clearImage() {
     this.vueCanvas.clearRect(30, 30, 10, 10)

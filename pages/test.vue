@@ -5,7 +5,7 @@
     </div>
     <div class="page__container">
       <div class="canvas__container">
-        <canvas-component />
+        <canvas-component ref="canvasComponent" />
       </div>
       <div class="selector__container">
         <list-component :data="data" :handle-click="handleClick" />
@@ -27,7 +27,10 @@ export default class TestPage extends Vue {
 
   selectedImages: any[] = []
 
-  counter: number = 1
+  removedCoordinates: any[] = []
+
+  counterX: number = 0
+  counterY: number = 0
 
   async mounted() {
     const data = await $axios.$get(
@@ -52,7 +55,6 @@ export default class TestPage extends Vue {
     const exist = this.selectedImages.findIndex(
       (image) => metadata.token_id === image.token_id
     )
-    console.log('🚀 ~ TestPage ~ handleClick ~ exist', exist)
     if (exist >= 0) {
       this.selectedImages.splice(exist, 1)
     } else {
@@ -63,11 +65,31 @@ export default class TestPage extends Vue {
   handleAdd(metadata: any) {
     const canvasImage = {
       ...metadata,
-      x: this.counter * 10,
-      y: this.counter * 10,
+      x: this.counterX * 50,
+      y: this.counterY * 50,
     }
     this.selectedImages.push(canvasImage)
-    this.counter++
+    this.handleCounter()
+    const canvas = this.$refs.canvasComponent as Vue & {
+      addImage: (canvasImage: any) => void
+    }
+    canvas.addImage(canvasImage)
+  }
+
+  handleRemove(metadata: any) {
+    const { x, y } = metadata
+    this.removedCoordinates.push({ x, y })
+  }
+
+  handleCounter() {
+    const resetCounter = (count: number) => {
+      if (count === 7) {
+        return 0
+      }
+      return count + 1
+    }
+    this.counterY = this.counterX === 7 ? this.counterY + 1 : this.counterY
+    this.counterX = resetCounter(this.counterX)
   }
 }
 </script>

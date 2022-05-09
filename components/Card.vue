@@ -2,19 +2,16 @@
   <div
     v-if="data.metadata"
     class="card__container"
-    @click="handleClick({ ...data.metadata, token_id: data.token_id })"
+    @click="
+      handleClick({ ...data.metadata, token_id: data.token_id, image: image })
+    "
   >
     <object>
-      <img
-        :src="getImage(data.metadata.image, data.metadata.image_url)"
-        alt=""
-        onerror="this.style.display='none'"
-      />
+      <img :src="image" alt="" onerror="this.style.display='none'" />
     </object>
     <video v-show="isVideo" ref="vid" :autoplay="true" :loop="true">
-      <source :src="getImage(data.metadata.image, data.metadata.image_url)" />
+      <source :src="image" />
     </video>
-    <!-- {{ getImage(data.metadata.image, data.metadata.image_url) }} -->
     <div>
       {{ name }}
     </div>
@@ -50,14 +47,7 @@ export default class CardComponent extends Vue {
     return 'NA'
   }
 
-  // getName(name: string | null, title: string | null, metaName: string | null) {
-  //   if (metaName) return metaName
-  //   if (title) return title
-  //   if (name) return name
-  //   return 'NA'
-  // }
-
-  getImage(image: string | null, image_url: string | null) {
+  get image() {
     const checkImage = (name: string) => {
       if (name.includes('ipfs/')) {
         return `https://gateway.moralisipfs.com/ipfs/${name.split('ipfs/')[1]}`
@@ -69,12 +59,12 @@ export default class CardComponent extends Vue {
       }
       return name
     }
-    if (image) {
-      const url = checkImage(image)
+    if (this.data.metadata.image) {
+      const url = checkImage(this.data.metadata.image)
       return url
     }
-    if (image_url) {
-      const url = checkImage(image_url)
+    if (this.data.metadata.image_url) {
+      const url = checkImage(this.data.metadata.image_url)
       return url
     }
     return 'NA'
