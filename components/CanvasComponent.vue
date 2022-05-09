@@ -25,8 +25,8 @@ export default class CanvasComponent extends Vue {
     img.src = metadata.image
   }
 
-  clearImage() {
-    this.vueCanvas.clearRect(30, 30, 10, 10)
+  clearImage(x: any, y: any) {
+    this.vueCanvas.clearRect(x, y, 50, 50)
   }
 }
 </script>

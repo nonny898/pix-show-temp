@@ -56,29 +56,55 @@ export default class TestPage extends Vue {
       (image) => metadata.token_id === image.token_id
     )
     if (exist >= 0) {
-      this.selectedImages.splice(exist, 1)
+      this.handleRemove(exist)
     } else {
       this.handleAdd(metadata)
     }
   }
 
   handleAdd(metadata: any) {
+    const { x, y } = this.getCoordinates()
     const canvasImage = {
       ...metadata,
-      x: this.counterX * 50,
-      y: this.counterY * 50,
+      x,
+      y,
     }
     this.selectedImages.push(canvasImage)
-    this.handleCounter()
     const canvas = this.$refs.canvasComponent as Vue & {
       addImage: (canvasImage: any) => void
     }
     canvas.addImage(canvasImage)
   }
 
-  handleRemove(metadata: any) {
-    const { x, y } = metadata
+  getCoordinates() {
+    if (this.removedCoordinates.length > 0) {
+      const { x, y } = this.removedCoordinates[0]
+      this.removedCoordinates.splice(0, 1)
+      return {
+        x,
+        y,
+      }
+    }
+    const x = this.counterX * 50
+    const y = this.counterY * 50
+    this.handleCounter()
+    return { x, y }
+  }
+
+  handleRemove(index: number) {
+    const { x, y } = this.selectedImages[index]
     this.removedCoordinates.push({ x, y })
+    this.removedCoordinates.sort((a: any, b: any) => {
+      if (a.y === b.y) {
+        return a.x - b.x
+      }
+      return a.y > b.y ? 1 : -1
+    })
+    this.selectedImages.splice(index, 1)
+    const canvas = this.$refs.canvasComponent as Vue & {
+      clearImage: (x: any, y: any) => void
+    }
+    canvas.clearImage(x, y)
   }
 
   handleCounter() {
