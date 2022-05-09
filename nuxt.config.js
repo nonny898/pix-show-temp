@@ -20,6 +20,7 @@ export default {
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
     { src: '~plugins/accessor.ts' },
+    { src: '~plugins/konva.ts', mode: 'client' },
     // { src: '~plugins/axios.ts' },
   ],
 
@@ -47,7 +48,9 @@ export default {
   },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
-  build: {},
+  build: {
+    transpile: ['konva']
+  },
 
   publicRuntimeConfig: {
     // Axios module configuration: https://go.nuxtjs.dev/config-axios

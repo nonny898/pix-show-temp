@@ -3,9 +3,12 @@
     <div>
       {{ message }}
     </div>
+
     <div class="page__container">
       <div class="canvas__container">
-        <canvas-component ref="canvasComponent" />
+        <client-only>
+          <canvas-component ref="canvasComponent" />
+        </client-only>
       </div>
       <div class="selector__container">
         <list-component :data="data" :handle-click="handleClick" />
@@ -31,6 +34,20 @@ export default class TestPage extends Vue {
 
   counterX: number = 0
   counterY: number = 0
+
+  configKonva = {
+    width: 200,
+    height: 200,
+  }
+
+  configCircle = {
+    x: 100,
+    y: 100,
+    radius: 70,
+    fill: 'red',
+    stroke: 'black',
+    strokeWidth: 4,
+  }
 
   async mounted() {
     const data = await $axios.$get(
@@ -92,7 +109,7 @@ export default class TestPage extends Vue {
   }
 
   handleRemove(index: number) {
-    const { x, y } = this.selectedImages[index]
+    const { x, y, token_id } = this.selectedImages[index]
     this.removedCoordinates.push({ x, y })
     this.removedCoordinates.sort((a: any, b: any) => {
       if (a.y === b.y) {
@@ -102,9 +119,9 @@ export default class TestPage extends Vue {
     })
     this.selectedImages.splice(index, 1)
     const canvas = this.$refs.canvasComponent as Vue & {
-      clearImage: (x: any, y: any) => void
+      clearImage: (id: any) => void
     }
-    canvas.clearImage(x, y)
+    canvas.clearImage(token_id)
   }
 
   handleCounter() {
